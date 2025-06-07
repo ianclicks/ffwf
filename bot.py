@@ -32,3 +32,4 @@ streaming_activity = discord.Streaming(
 
 client = InviteBanBot(intents=intents, activity=streaming_activity)
 client.run("YOUR_BOT_TOKEN")
+
