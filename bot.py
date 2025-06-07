@@ -1,4 +1,5 @@
 import discord
+import os
 
 class InviteBanBot(discord.Client):
     async def on_ready(self):
@@ -11,7 +12,11 @@ class InviteBanBot(discord.Client):
         if "discord.gg/" in message.content.lower():
             if "discord.gg/mandatory" not in message.content.lower():
                 try:
-                    await message.guild.ban(message.author, reason="Unauthorized Discord invite", delete_message_days=1)
+                    await message.guild.ban(
+                        message.author,
+                        reason="Unauthorized Discord invite",
+                        delete_message_days=1
+                    )
                     print(f"🚫 {message.author} was banned for posting an invite link.")
                 except discord.Forbidden:
                     print("❌ Missing permission to ban users.")
@@ -27,9 +32,10 @@ intents.members = True
 # Streaming status
 streaming_activity = discord.Streaming(
     name="🔗 join /mandatory",
-    url="https://twitch.tv/example"  # replace with your actual Twitch link
+    url="https://twitch.tv/example"  # Replace with your actual Twitch link
 )
 
 client = InviteBanBot(intents=intents, activity=streaming_activity)
-client.run("YOUR_BOT_TOKEN")
 
+# Get token from Railway secret
+client.run(os.environ["TOKEN"])
