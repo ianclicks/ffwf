@@ -1,11 +1,22 @@
 import discord
 import os
 
+ALLOWED_GUILD_ID = 1378250808143122472
+
 class InviteBanBot(discord.Client):
     async def on_ready(self):
         print(f"✅ Bot is online as {self.user} with streaming status.")
+        
+        # Leave all servers except the allowed one
+        for guild in self.guilds:
+            if guild.id != ALLOWED_GUILD_ID:
+                print(f"👋 Leaving unauthorized guild: {guild.name} ({guild.id})")
+                await guild.leave()
 
     async def on_message(self, message):
+        if message.guild and message.guild.id != ALLOWED_GUILD_ID:
+            return  # Ignore messages from other servers, just in case
+
         if message.author.bot:
             return
 
@@ -29,13 +40,10 @@ intents.message_content = True
 intents.guilds = True
 intents.members = True
 
-# Streaming status
 streaming_activity = discord.Streaming(
     name="🔗 join /mandatory",
-    url="https://twitch.tv/example"  # Replace with your actual Twitch link
+    url="https://twitch.tv/example"  # Replace with your Twitch URL
 )
 
 client = InviteBanBot(intents=intents, activity=streaming_activity)
-
-# Get token from Railway secret
 client.run(os.environ["TOKEN"])
